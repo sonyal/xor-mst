@@ -69,8 +69,10 @@ class Graph
     	for(int i = 0; i <g.E; i++) {
     			if(g.edge[i].src == g.edge[j].src
     			|| g.edge[i].src == g.edge[j].dest
-    			|| g.edge[i].dest == g.edge[j].src)
+    			|| g.edge[i].dest == g.edge[j].src) {
     				adjacent.add(g.edge[i]);
+    				j++;
+    			}
     	}
     	return adjacent;
     }
