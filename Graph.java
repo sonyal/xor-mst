@@ -56,12 +56,24 @@ class Graph
     	//     check weight of current edge path   XOR
     	//i want to return edge with current src, beginning at 0
     	//how do i enforce going from connecting src destinations, and not random edges??
+    	//how do you ignore origins
     	
     	return g.edge[edgeChoice].weight ^ findXOR(g, vertValue, g.edge[++edgeChoice], edgeChoice);
     }
     
     //make method to get adjacent edges
-  //  ArrayList<Type> str = new ArrayList<Type>();
+    ArrayList<Edge> findAdj(Graph g, Edge e){
+    	//considered shared if the yshare a vertex
+    	ArrayList<Edge> adjacent = new ArrayList<Edge>();
+    	int j = 0;
+    	for(int i = 0; i <g.E; i++) {
+    			if(g.edge[i].src == g.edge[j].src
+    			|| g.edge[i].src == g.edge[j].dest
+    			|| g.edge[i].dest == g.edge[j].src)
+    				adjacent.add(g.edge[i]);
+    	}
+    	return adjacent;
+    }
     
     
     
