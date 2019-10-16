@@ -32,78 +32,72 @@ class Graph {
 			edge[i] = new Edge();
 	}
 
-	// vertValue = n, the final vert
-	//
-	int findXOR(Graph g, int finalVerticeValue, Edge edge, int currEdge, int min) {
+	
+	/*
+	 * Wrote XOR, pathwipe, findAdj, and findFirstEdge
+	 * findAdj ignores previously visited edges
+	 * XOR still hasnt passed test3, require better printing for testing
+	 */
+	
+	int findXOR(Graph g, int finalVerticeValue, Edge edge, int pathLengthMinusOne, int min) {
+		/*
+		 * Testing would be much faster if  I had a reliable print for the path
+		 * being taken, current one is unclear.
+		 */
+		
 		// adjacent edges = same vertice source
 		// backtracking creates 0s
-		// how do i ignore backtracking?
-
-		// problem is getting out of bounds on currEdge indexing of arrays
-		// of all edges, check current edge source if equal to final
-		/*
-		 * if (currEdge == g.E) { System.out.println("uhoh"); return 0;}// returns same
-		 * value, 0^anything =anyti else if (g.edge[currEdge].src == finalVerticeValue)
-		 * {
-		 * 
-		 * return g.edge[currEdge].weight; }
-		 */
-
-		if (edge.src == 1) {
+		// how do i ignore backtracking? SOLVED use boolean traversed
+		// problem is getting out of bounds on currEdge indexing of arrays - SOLVED using a list resizes it
+		if (edge.src == 1 ) {
 			System.out.println("\n");
+			pathWipe(g);
 		}
-
-		if (min == 0) {
-			// System.out.print("boo");
-		}
-		if (g.edge[currEdge].src == 4) {
-			System.out.println("hi");
-		}
-		g.edge[currEdge].traversed = true;
+		edge.traversed = true;
 		// CHECK DEST
-		if (g.edge[currEdge].dest == finalVerticeValue) {
-			System.out.print(g.edge[currEdge].src + "-(" + g.edge[currEdge].weight + ")->" + g.edge[currEdge].dest);
-			return g.edge[currEdge].weight;
+		if (edge.dest == finalVerticeValue) {
+			System.out.print(edge.src + "-(" + edge.weight + ")->" + edge.dest);
+			return edge.weight;
 		}
 
 		// for loop through all adjacent edges of current edge (share source or
 		// destination
 		// initially edge[0] passed in for edge, as that is the first edge
-		int forLoopSize = findAdj(g, edge, currEdge).size();
-		for (int i = 0; i < findAdj(g, edge, currEdge).size(); i++) {
-			System.out.print(g.edge[currEdge].src + "-(" + g.edge[currEdge].weight + ")->");
-			
-			// i is less than size of all adjacent list
+		for(Edge e: findAdj(g, edge, pathLengthMinusOne)) {//an enhanced for loops lets size adapt, helps outta bounds problems
+		
+			System.out.print(" " + edge.src + "-(" + edge.weight + ")->");
 			
 			 
 			// if edge dest is final vert, return this path
-			int XORresult = (g.edge[currEdge].weight
-					^ findXOR(g, finalVerticeValue, findAdj(g, edge, currEdge).get(i), 1+currEdge, min));
-			//if(g.edge[currEdge].dest==finalVerticeValue) { i--; }
-			// System.out.println( XORresult);
+			//currently explores adjacent, but ignores weight of final edge
+			int XORresult = (edge.weight
+					^ findXOR(g, finalVerticeValue, e, 1+pathLengthMinusOne, min));
+			
+			
+			
 			if (min > XORresult) {
 				min = XORresult;
 			}
 		}
-		// System.out.println("--");
-		/*
-		 * if(min == 32) {
-		 * 
-		 * System.out.println(min); }
-		 */
 		return min;
 	}
-
+	//reset all visited paths to unvisted, in case freakier paths reuse routes
+	void pathWipe(Graph g) {
+		for(Edge e: g.edge) {
+			e.traversed = false;
+		}
+	}
+	
 	// make method to get adjacent edges
-	ArrayList<Edge> findAdj(Graph g, Edge e, int currentEdge) {
+	ArrayList<Edge> findAdj(Graph g, Edge e, int pathLengthMinusOneParam) {
 		// considered shared if the yshare a vertex
 		ArrayList<Edge> adjacent = new ArrayList<Edge>();
-		if (currentEdge < g.E) {
+		if (pathLengthMinusOneParam < g.E) {
 			for (int i = 0; i < g.E; i++) {
 				if ((!g.edge[i].traversed)
-						&& ((g.edge[currentEdge].src == g.edge[i].src && g.edge[currentEdge].dest != g.edge[i].dest)
-								|| g.edge[currentEdge].src == g.edge[i].dest
-								|| g.edge[currentEdge].dest == g.edge[i].src)) {
+						&& ((e.src == g.edge[i].src && e.dest != e.dest)
+								|| e.src == g.edge[i].dest
+								|| e.dest == g.edge[i].src)) {
 					adjacent.add(g.edge[i]);
 				}
 			}
@@ -123,6 +117,14 @@ class Graph {
 		return firstEdge;
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
 	// A utility function to find set of an element i
 	// (uses path compression technique)
 	int find(subset subsets[], int i) {
